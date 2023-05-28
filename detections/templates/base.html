@@ -82,18 +82,26 @@
     <div class="header">
       <ul id="nav">
         <li><a href="/">Home</a></li>
-        <li><a href="/admin/canhbao/camera/">Camera</a></li>
+        <li class="dropdown" style="margin-left: 0">
+          <a class="dropdown-btn"> Camera </a>
+          <div class="dropdown-content">
+            {% for x in allcam %}
+           
+              <a href=" {% url 'detail_camera' x.id_cam %}">Camera {{ x.id_cam }}</a>
+            {% endfor %} 
+          </div>  
+          
+        </li>
         <li><a href="/mapcam">Map Camera</a></li>
         {% if user_object %}
         <li class="dropdown">
           
           <a class="dropdown-btn">  {{ user_object }} </a>
           <div class="dropdown-content">
-            <a href="#">Thông tin tài khoản</a>
+            <a href="/profile">Thông tin tài khoản</a>
             {% if is_staff %}
               <a href="/admin/">Quản trị</a>
             {% endif %}
-            <a href="#">Đổi mật khẩu</a>
             <a href="/logout">Đăng xuất</a>
           </div>
           

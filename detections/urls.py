@@ -22,4 +22,5 @@ urlpatterns = [
     path("mapcam", views.mapCamera, name="mapcam"),
     path("cameras", views.get, name="cameras"),
     path("search_detection", views.search_detection, name="search_detection"),
+    path("profile", views.editProfile, name="profile"),
 ]

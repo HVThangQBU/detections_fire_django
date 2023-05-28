@@ -46,23 +46,12 @@ def detailCamera(request, id):
     template = loader.get_template("detail-camera.html")
 
     camera = Camera.objects.get(id_cam=id)
-    # detect = Detection.objects.get(name_cam=camera.name_cam)
-    # detect_last = (
-    #     Detection.objects.filter(name_cam=camera.name_cam)
-    #     .order_by("-time_detect")
-    #     .values()[1]
-    # )
+   
     detect_last = (
         Detection.objects.filter(name_cam=camera.name_cam)
         .order_by("-id_detect")
         .first()
     )
-
-    # detect = (
-    #     Detection.objects.filter(name_cam=camera.name_cam)
-    #     .order_by("-time_detect")
-    #     .values()[:20:-1]
-    # )
     detect = (
         Detection.objects.filter(name_cam=camera.name_cam)
         .order_by("-id_detect")
@@ -211,7 +200,6 @@ def gen(camera_stream):
 # @login_required(login_url='signin')
 def video_feed(request, feed_type, device):
     """Video streaming route. Put this in the src attribute of an img tag."""
-
     cam = Camera.objects.filter(pk=device)[0]
     port = cam.port
     # port_list = (5555, 5566, 5577)
@@ -224,7 +212,6 @@ def video_feed(request, feed_type, device):
             ),
             content_type="multipart/x-mixed-replace; boundary=frame",
         )
-
 
 @login_required(login_url='signin')
 def video_feed_one_camera(request, feed_type, device):
@@ -318,15 +305,14 @@ def mapCamera(request):
     template = loader.get_template("map-camera.html")
     return HttpResponse(template.render(context, request))
 
-
+# get list camera
 def get(request):
     cameras = Camera.objects.all()
     camera_list = list(cameras.values())
     return JsonResponse(camera_list, safe=False)
 
-
+#  search detection by time
 def search_detection(request):
-    print("chua vao ",request.method)
     user_object = User.objects.get(username=request.user.username)
     if request.method == 'POST':
         body_unicode = request.body.decode('utf-8')
@@ -342,4 +328,39 @@ def search_detection(request):
         # Return an HttpResponse object indicating that the request method is not supported
         return JsonResponse({}, status=400)
 
+@login_required(login_url="signin")
+def editProfile(request):
+    user_object = User.objects.get(username=request.user.username)
+    print("ten")
+    custom_user = CustomUser.objects.get(user_id=user_object.id)
+    print("ten", custom_user.bio)
+    template = loader.get_template("profile.html")
+    context = {
+        "user_object": user_object,
+        "custom_user": custom_user,
+    }
+    if request.method == 'POST':
+        if request.FILES.get('image') == None: 
+            image = custom_user.profile_img
+          
+        if request.FILES.get('image') != None:
+            image = request.FILES.get('image')
 
+        first_name = request.POST.get('firstName', '')
+        last_name = request.POST.get('last_name', '')
+        number_phone = request.POST.get('number_phone', '')
+        address = request.POST.get('address', '')
+        latitude = request.POST.get('latitude', '')
+        longitude = request.POST.get('longitude', '')
+        bio = request.POST['bio']
+        custom_user.profile_img = image
+        custom_user.phone_number = number_phone
+        custom_user.address = address
+        custom_user.latitude = latitude
+        custom_user.longitude = longitude
+        custom_user.bio = bio
+        custom_user.save()
+        user_object.first_name = first_name
+        user_object.last_name = last_name
+        user_object.save()
+    return HttpResponse(template.render(context, request))

@@ -48,14 +48,13 @@ class Detection(models.Model):
 
 class CustomUser(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    id_user = models.IntegerField()
+    id_user = models.AutoField(primary_key=True)
     bio = models.TextField(blank=True)
     profile_img = models.ImageField(
         upload_to="profile_images", default="blank-profile-picture.png"
     )
     phone_number = models.CharField(max_length=20)
     address = models.TextField(max_length=50, blank=True)
-    id_group = models.IntegerField(default=2)
     latitude = models.CharField(max_length=150, blank=True)
     longitude = models.CharField(max_length=150, blank=True)
  
