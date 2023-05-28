@@ -16,7 +16,7 @@ class Camera(models.Model):
     port = models.IntegerField(default=2222)
     name_location = models.CharField(max_length=100, blank=True)
     location = models.CharField(max_length=150, blank=True)
-    user = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     latitude = models.CharField(max_length=150, blank=True)
     longitude = models.CharField(max_length=150, blank=True)
     urlRTSP = models.CharField(max_length=100, default=None)
@@ -56,6 +56,8 @@ class CustomUser(models.Model):
     phone_number = models.CharField(max_length=20)
     address = models.TextField(max_length=50, blank=True)
     id_group = models.IntegerField(default=2)
+    latitude = models.CharField(max_length=150, blank=True)
+    longitude = models.CharField(max_length=150, blank=True)
  
 
     def __str__(self):
