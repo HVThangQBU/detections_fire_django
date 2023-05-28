@@ -1,0 +1,18 @@
+image:
+video: demo/video.mp4
+webcam:
+camera_to_use: 0
+trt: false
+models:
+  md1: shufflenetonfire
+  md2: nasnetonfire
+weight:
+cpu: false
+output:
+fullscreen: false
+EMAIL_ADDRESS: hoangthangd5ddt@gmail.com
+EMAIL_PASSWORD: sbvbejswheittjku
+MY_TOKEN: 5726743498:AAErxJ6S9OuFX3k3rOM71RJ7m9tIxBLSsSE
+
+
+

@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Camera detail{% endblock %}
+
+
+{% block content %}
+<!-- Mapbox-->
+
+
+
+<div id="main">
+<input type="hidden" id ="idcamera" value="{{camera.id_cam}}">
+  <div class="content">
+    <div id="content-center">
+      <div id="content-left" style="width: 70%">
+        <div class="camera video-player" style="width: 100%; height: 100%" >
+          <img src="{% url 'video_feed_one_camera' feed_type='camera' device=index_cam %}"  alt="Camera stream 1" class="center"  id="my-video" controls>
+          <div class="controls">
+            <button id="play-pause-btn" style="display: none;"><i class="fas fa-play"></i></button>
+            <button id="fullscreen-btn"><i class="fas fa-expand"></i></button>
+          </div>
+          <h3 align="center">{{ camera.name_cam}}  </h3>
+          <h3 align="center">VỊ TRÍ {{ camera.name_location }} </h3>
+          <h3 id="user-location" data-lat="{{ camera.latitude }}" data-lng="{{ camera.longitude }}"><a href="#"> VỊ TRÍ CỦA BẠN TRÊN GOOGLE MAPS</a></h3>
+          
+        </div>
+       {% comment %} <div id="map">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3805.5426005532345!2d106.6049806507262!3d17.
+          481593204623127!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31475726fe988adb%3A0xd82a331339abca55!2sQuang%20Binh%20University
+          !5e0!3m2!1sen!2s!4v1671960944672!5m2!1sen!2s" width="100%"    height="300px" style="border:0;" allowfullscreen="" loading="lazy" position="relative"                  referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <h3 align="center">Vị trí camera</h3>
+        </div> {% endcomment %}
+      </div>
+      {% comment %} <div class="content-right" id="content-log">
+        <div class="abc">
+          {% comment %} <div class="camera big-img">
+            {% if detect_last.image_detect %}
+              <img src="{{ MEDIA_URL }}{{ detect_last.image_detect }}" alt="hinhanh" class="center" style="width:500px; height:400px;">
+            {% else %}
+                <img src="{% static 'novideo.png' %}" alt="hinhanh" class="center" style="width:500px; height:400px;">
+            {% endif %}
+              
+              <h3 align="center">Hình ảnh cảnh báo </h3>
+            </div> {% endcomment %}
+          {% comment %} <div class="log-detail"> {% endcomment %}
+            {% comment %} <div id="latest-data">
+              {% comment %} <div class="log"> 
+                  <p class="content-detect-name"> Tên cảnh báo:  <span>{{ detect_last.name_detect }}</span></p>
+                  <p class="content-detect-time"> Thời gian:     <span>{{ detect_last.time_detect }}</span></p>
+                </div> {% endcomment %}
+              {% comment %} </div> 
+          </div>
+
+        </div>
+      </div> {% endcomment %}
+      <div class="content-right" id ="load-content">
+        <div class="camera" style="margin: 0;">
+          <div id="display-log" style="overflow-y: auto; max-height: 83vh;">
+            {% for det in detect  %}
+              <div class="log-canhbao">
+                <div class="log-img">
+                  <img src="{{ MEDIA_URL }}{{det.image_detect}}" alt="" class="center" style="width:150px; height: 100px;">
+                </div>
+                <div class="log-content">
+                    <p class="log-content-name"> Tên cảnh báo:  <span>{{ det.name_detect }}</span></p>
+                    <p class="log-content-time"> Thời gian:     <span>{{ det.time_detect }}</span></p>
+                  
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <a href="/detail_history/{{ index_cam }}">
+            <div style="background: #bdff1b; padding: 1px; border-radius: 35px; display: flex; justify-content: center; align-items: center; height: 30px; margin:auto; width:260px; margin-top:10px">
+              <h5 style="text-transform: uppercase">Xem chi tiết lịch sử</h5> 
+            </div>
+          </a>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// change content div
+
+$(document).on('click', '.log-canhbao', function(){
+  var $divCanhBao = $(this);
+  console.log($divCanhBao)
+  var $contentName = $divCanhBao.find('.log-content > .log-content-name').text();
+  var $contentTime = $divCanhBao.find('.log-content > .log-content-time').text();
+  var $smallImg = $divCanhBao.find('.log-img > img').attr('src');
+  console.log(1,$divCanhBao.find('.log-content > .log-content-time').text())
+  //console.log(1,$divCanhBao.find('.log-img > img').attr('src'))
+  $('.log-detail > .content-detect-name').text($contentName);
+  $('.log-detail > .content-detect-time').text($contentTime);
+  $('.big-img > img').attr('src', $smallImg);
+});
+
+
+$(document).ready(function() {
+
+  loadData();
+
+  document.getElementById("time-start").value = '2022-06-01T08:30';
+  document.getElementById("time-end").value = '2023-06-01T08:30';
+  $('#submit-time').click(function(){
+    const dateCon = document.querySelector('input[type="datetime-local"]').value;
+    var id = document.getElementById("time-end").value;
+    console.log(dateCon, id,776877);
+  });
+});
+{% comment %} setInterval(function(){
+//   console.log(2)
+//   $('#load-content').load('/templates/detail-camera.html');
+ }, 1000) /* time in milliseconds (ie 2 seconds)*/ {% endcomment %}
+ 
+ var loadData = function() {
+  var id = document.getElementById("idcamera").value;
+  console.log(12312,id);
+  // GET AJAX request
+  var currentData = null;
+  $.ajax({
+      type: 'GET',
+      url: "{% url 'load_detect' %}",
+      data: {"id": id},
+
+      success: function ({dct}) {
+
+      if (JSON.stringify(dct) !== JSON.stringify(currentData)) {
+        currentData = dct; 
+        todayDate = dateFormat(dct.time_detect, "dd/mm/yyyy h:MM:ss TT");
+
+        console.log(123, todayDate)
+        
+
+           var html =   " <div class='log-canhbao'><div class='log-img'>"
+              + "<img src='" + {{ MEDIA_URL }} + dct.image_detect + "' alt='' class='center' style='width:150px; height: 100px;'></div><div class='log-content'><p class='log-content-name'> Tên cảnh báo:  <span>" +
+                dct.name_detect + "</span></p><p class='log-content-time'> Thời gian: <span>" +
+                  todayDate + "</span></p></div> </div>"; 
+          $("#display-log").prepend(html);
+          }
+
+         setTimeout(loadData, 1000);
+
+
+      },
+      error: function (error) {
+          console.log(123,error)
+      }
+  });
+};
+
+
+const video = document.getElementById('my-video');
+const playPauseBtn = document.getElementById('play-pause-btn');
+const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+playPauseBtn.addEventListener('click', () => {
+  if (video.paused) {
+    video.play();
+    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+  } else {
+    video.pause();
+    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+  }
+});
+
+fullscreenBtn.addEventListener('click', () => {
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+  } else {
+    video.requestFullscreen();
+    fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+  }
+});
+
+</script>
+
+<style>
+  .video-player {
+    position: relative;
+    width: 640px;
+    height: 360px;
+    overflow: hidden;
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    {% comment %} object-fit: cover; {% endcomment %}
+  }
+  
+  .controls {
+    position: absolute;
+    bottom: 100px;
+    right: 0;
+    width: 100%;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+  }
+  
+  button {
+    background-color: #d97c1100;
+    color: #fff;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin: 0 10px;
+    padding: 5px
+  }
+</style>
+{% endblock %}
+
+
+{% block extra_css %}
+<meta charset="UTF-8">
+<link rel="stylesheet" href="{% static '/css/detail-camera.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-...">
+<style>
+  label {
+    display: inline-block;
+    font: 1rem 'Fira Sans', sans-serif;
+}
+
+input,
+label {
+    margin: 0.4rem 0;
+}
+
+</style>
+
+<style>
+  .video-wrapper {
+    width: 320px;
+    height: 240px;
+  }
+  #small-video {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<!-- Mapbox-->
+<script
+src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.js"></script>
+<link rel="stylesheet"
+href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.1/mapbox-gl-directions.css"
+type="text/css">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.14.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.14.0/mapbox-gl.js"></script>
+<script
+src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet"
+href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
+type="text/css">
+
+
+<script>
+  //mapbox acces token
+  mapboxgl.accessToken =
+    "pk.eyJ1IjoiYmx1ZXJoaW5vIiwiYSI6ImNqZDJjYjZxeDFzcHUzM213MGdoOTh4dXUifQ.0St02mA2vqSMM5qsvMfngQ";
+
+    function getUserLocation() {
+      return new Promise(function (resolve, reject) {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              var lng = position.coords.longitude;
+              var lat = position.coords.latitude;
+              var startPoint = [lng, lat];
+              resolve(startPoint);
+            },
+            function (error) {
+              reject(error);
+            }
+          );
+        } else {
+          reject("Geolocation is not supported by this browser.");
+        }
+      });
+    }
+    
+    // in vị trí hiện tại của người dùng ra console
+    getUserLocation()
+      .then(function(startPoint) {
+        var userLocationElement = document.getElementById("user-location");
+        console.log("Vị trí hiện tại của bạn là: ", startPoint[0]);
+        var userLocationElement = document.getElementById("user-location");
+        var latitude = userLocationElement.dataset.lat;
+        var longitude = userLocationElement.dataset.lng;
+        var destination = latitude + "," + longitude;
+        userLocationElement.innerHTML = `<a href="https://www.google.com/maps/dir/?api=1&origin=${startPoint[1]},${startPoint[0]}&destination=${latitude},${longitude}&travelmode=driving" target="_blank">Vị trí của bạn trên Google Maps</a>`;
+       
+        console.log("Vị trí hiện tại của bạn là: ", startPoint);
+
+       // userLocationElement.textContent = "Vị trí của bạn: " + startPoint[0] + ", " + startPoint[1];
+        
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+    
+   
+</script>
+
+
+
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="http://stevenlevithan.com/assets/misc/date.format.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+
+{% endblock %}

@@ -1,0 +1,150 @@
+
+*{
+   padding: 0;
+   margin: 0;
+   box-sizing: border-box;
+
+}
+html{
+   scroll-behavior: smooth;
+   font-family: "Times New Roman", Times, serif;
+
+}
+body {
+ 
+   /* overflow: hidden; */
+   margin: 0   ;
+}
+#main {
+   display: block;
+   height: 100%;
+   width: 100%;
+}
+.header {
+   background-color: rgb(2, 56, 56);
+   top: 0;
+   left: 0;
+   right: 0;
+   z-index: 1;
+   height: 4%;
+   position: relative;
+
+}
+h3 {
+      color: rgb(126, 26, 51);
+      text-transform: uppercase;
+      margin: 5px 5px 5px 5px;
+      text-align: center;
+}
+#nav {
+   display: inline-block;
+}
+#nav > li {
+   display: inline-block;
+}
+#nav li {
+   position: relative;
+}
+#nav > li > a {
+   color: aliceblue;
+   text-transform: uppercase;
+}
+#nav li a {
+   text-decoration: none;
+   line-height: 30px;
+   padding: 0 20px;
+}
+#nav li:hover > a{
+   color: #000;
+   background-color: #ccc;
+   display: block;
+}
+.content {
+   width: 100%;
+   height: 90%;
+   position: relative;
+
+}
+#content-center {
+   display: flex;
+   margin-top: 15px !important;
+   width: 100%;
+}
+.content-right {
+   width: 30% !important;
+   position: relative;
+  
+}
+#content-left {
+   width: 40%;  
+   height: 100%;
+   position: relative;
+}
+.center {
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+}
+.camera {
+   width: 100%;
+   padding: 5px 5px 4px 5px;
+   margin: 5px 5px 0px 5px;
+   height: 50%;
+}
+#map {
+   width: 100%;
+   margin-bottom: 10px;
+   padding: 10px;
+   position: relative;
+   height: 50%;
+}
+.log-canhbao-title, .log-canhbao {
+   /* background-color: aquamarine; */
+   width: 100%; 
+   display: flex;
+   position: relative;
+   text-align: center;
+}
+.log-canhbao-title {
+   height: 60px;
+   line-height: 20px;
+   margin-bottom: 5px;
+}
+.log-canhbao{
+   margin-bottom: 5px;
+   cursor: pointer;
+   
+}
+.log-canhbao:hover{
+   background-color: #ccc;
+   
+}
+.log-canhbao:hover .hover{
+   background-color: #ccc;
+   
+}
+.log {
+   margin-top: 10px;
+   padding: 5px;
+   margin: 50px;
+   font-size: 20px;
+}
+.log > pre{
+   color: rgb(238, 19, 19);
+   padding: 5px;
+}
+.log > pre > span{
+   color: rgb(5, 3, 4);
+   
+}
+.log-content > h3 {
+   text-align: center;
+}
+.log-content {
+   width: 50%;
+   text-align: left;
+}
+.log-img {
+   width: 50%;
+}
+ 

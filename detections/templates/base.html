@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+
+    <link rel="stylesheet" href="{% static '/css/detail-camera.css' %}" />
+    <style>
+      label {
+        display: inline-block;
+        font: 1rem "Fira Sans", sans-serif;
+        margin: 0.4rem 0;
+      }
+
+      input,
+      a {
+        text-decoration: none;
+      }
+
+      .dropdown {
+        position: relative;
+        display: inline-block;
+        margin-left: 1338px;
+      }
+      
+      .dropdown-btn {
+       
+        font-size: 16px;
+      
+      }
+      
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        z-index: 1;
+        min-width: 178px;
+        background-color:#fff
+      }
+      
+      .dropdown-content a {
+        color: #333;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
+      
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+
+    
+      .dropdown-content a:hover    {
+        color: #000;
+        background-color: #ccc;
+        display: block;
+        
+      }
+      footer {
+        {% comment %} position: absolute; {% endcomment %}
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #f5f5f5;
+        text-align: center;
+        padding: 6px;
+        position: fixed;
+      }
+      body {
+        min-height: 100vh;
+  position: relative;
+      }
+    </style>
+    <title>{% block title %}{% endblock %}</title>
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    <!-- Navbar -->
+   
+    <div class="header">
+      <ul id="nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/admin/canhbao/camera/">Camera</a></li>
+        <li><a href="/mapcam">Map Camera</a></li>
+        {% if user_object %}
+        <li class="dropdown">
+          
+          <a class="dropdown-btn">  {{ user_object }} </a>
+          <div class="dropdown-content">
+            <a href="#">Thông tin tài khoản</a>
+            {% if is_staff %}
+              <a href="/admin/">Quản trị</a>
+            {% endif %}
+            <a href="#">Đổi mật khẩu</a>
+            <a href="/logout">Đăng xuất</a>
+          </div>
+          
+        
+        </li>
+        
+        {% endif %}
+      </ul>
+    </div>
+   
+
+    {% block content %} {% endblock %}
+    <footer>
+      <p>Bản quyền © 2023 Hoàng Thắng</p>
+    </footer>
+  </body>
+</html>
+
+<script>
+  $(document).ready(function () {
+    $("ul.navbar-nav li a").click(function () {
+      $("li a").removeClass("active");
+      $(this).addClass("active");
+    });
+  });
+
+  // Lấy button dropdown
+var dropdownBtn = document.querySelector(".dropdown-btn");
+
+// Thêm sự kiện click để mở dropdown
+dropdownBtn.addEventListener("click", function() {
+  var dropdownContent = this.nextElementSibling;
+  if (dropdownContent.style.display === "block") {
+    dropdownContent.style.display = "none";
+  } else {
+    dropdownContent.style.display = "block";
+  }
+});
+</script>
+
