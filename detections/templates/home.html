@@ -11,19 +11,35 @@
 
     <div class="camera-main-list">
       <div class="camera-main-item" id="main-first">
-        <img id="img-main" src="{% static 'addcam.png' %}" class="center" style="border: 1px solid #af4c4c00; width: 100%;" alt="Camera stream">
+        <div><img id="img-main" src="{% static 'addcam.png' %}" class="center" style="border: 1px solid #af4c4c00; width: 100%;" alt="Camera stream"></div>
+        <div class="camera-hover-item"  id="cam-hover_1">
+          <input type="hidden" id="inID1" >
+          <a href="#" id="main-cam_detail">Xem chi tiết</a>
+        </div>
       </div>
   
       <div class="camera-main-item" id="main-second">
-        <img id="img-main-second" src="{% static 'addcam.png' %}" class="center" style="border: 1px solid #af4c4c00; width: 100%" alt="Camera stream">
+        <div><img id="img-main-second" src="{% static 'addcam.png' %}" class="center" style="border: 1px solid #af4c4c00; width: 100%" alt="Camera stream"></div>
+        <div class="camera-hover-item" id="cam-hover_2">
+          <a href="#" id="main-cam_detail">Xem chi tiết</a>
+        </div>
       </div>
   
       <div class="camera-main-item" id="main-third">
-        <img id="img-main-third" src="{% static 'addcam.png' %}" class="center" style="border: 1px solid #af4c4c00; width: 100%" alt="Camera stream">
+        <div><img id="img-main-third" src="{% static 'addcam.png' %}" class="center" style="border: 1px solid #af4c4c00; width: 100%" alt="Camera stream"></div>
+        <div class="camera-hover-item"  id="cam-hover_3">
+          <input type="hidden" id="inID2" >
+          <a href="#" id="main-cam_detail">Xem chi tiết</a>
+        </div>
       </div>
   
       <div class="camera-main-item" id="main-four">
-        <img id="img-main-four" src="{% static 'addcam.png' %}" class="center" style="border: 1px solid #af4c4c00; width: 100%" alt="Camera stream">
+        <div><img id="img-main-four" src="{% static 'addcam.png' %}" class="center" style="border: 1px solid #af4c4c00; width: 100%" alt="Camera stream"></div>
+        <div class="camera-hover-item"  id="cam-hover_4">
+          <input type="hidden" id="inID4" >
+          <a href="#" id="main-cam_detail">Xem chi tiết</a>
+        </div>
+       
       </div>
      
     </div>  
@@ -48,27 +64,41 @@
 
   window.addEventListener('load', function() {
     const mainFirst = document.getElementById('main-first');
+    const camHover1 = document.getElementById('cam-hover_1');
     const mainSecond = document.getElementById('main-second');
+    const camHover2 = document.getElementById('cam-hover_2');
     const mainThird = document.getElementById('main-third');
+    const camHover3 = document.getElementById('cam-hover_3');
     const mainFour = document.getElementById('main-four');
+    const camHover4 = document.getElementById('cam-hover_4');
     const cameraItems = document.querySelectorAll('.camera-item');
     
     let mainCamera = mainFirst; // mặc định mainCamera là mainFirst
     
-    const switchMainCamera = function(url) {
+    const switchMainCamera = function(url, inputId) {
       mainCamera.querySelector('img').src = url;
+      // mainCamera trở tới childelêmnt -> a -> a.href += /inputId
+      let linkDetail = mainCamera.querySelector('a');
+
+      const href = linkDetail.getAttribute('href');
+      var url = "/detail_camera/" + encodeURIComponent(inputId);
+
+      linkDetail.setAttribute('href', url);
+
     }
     
     cameraItems.forEach(function(item) {
-      item.addEventListener('click', function() {
-      var inputId = item.querySelector("input").value;
-      console.log("Đã chọn input có id: " + inputId);
-      var url = "/video_feed/camera/" + encodeURIComponent(inputId) + "/";
-      switchMainCamera(url);
-      console.log("Đã chọn input có id: " + url);
-      closePopup()
-   
-      });
+        item.addEventListener('click', function() {
+          var inputId = item.querySelector("input").value;
+          console.log("Đã chọn input có id: " + inputId);
+          var url = "/video_feed/camera/" + encodeURIComponent(inputId) + "/";
+          switchMainCamera(url, inputId);
+          console.log("Đã chọn input có id: " + url);
+          closePopup()
+          
+        });
+      var idD1 = document.getElementById("inID1").value;
+      console.log(idD1)
     });
     
     mainFirst.addEventListener('click', function() {
@@ -88,13 +118,34 @@
     mainFour.addEventListener('click', function() {
       openPopup()
       mainCamera = mainFour; // gán mainCamera là mainSecond khi click vào mainSecond
-      
+    });
+    camHover1.addEventListener('click', function(event) {
+      event.stopPropagation();
+      console.log(1);
+      closePopup();
     });
 
+    camHover2.addEventListener('click', function(event) {
+      event.stopPropagation();
+      console.log(1);
+      closePopup();
+    });
+    camHover3.addEventListener('click', function(event) {
+      event.stopPropagation();
+      console.log(1);
+      closePopup();
+    });
+    camHover4.addEventListener('click', function(event) {
+      event.stopPropagation();
+      console.log(1);
+      closePopup();
+    });
   });
+
   function openPopup() {
     var popup = document.getElementById("popup");
     popup.style.display = "block";
+   
   }
 
   function closePopup() {
@@ -111,6 +162,28 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 <style>
 
+
+  .camera-main-item {
+    position: relative;
+  }
+  .camera-hover-item {
+    display: none;
+    position: absolute;
+    top: 90%;
+    left: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    z-index: 999;
+    width: 100px;
+    height: 50px;
+  }
+
+  .camera-main-item:hover .camera-hover-item {
+    display: block;
+  }
+  
   /* CSS cho popup */
   .popup {
     display: none; 
