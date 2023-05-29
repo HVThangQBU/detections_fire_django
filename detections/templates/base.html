@@ -23,7 +23,7 @@
       .dropdown {
         position: relative;
         display: inline-block;
-        margin-left: 1338px;
+       
       }
       
       .dropdown-btn {
@@ -38,6 +38,7 @@
         z-index: 1;
         min-width: 178px;
         background-color:#fff
+        
       }
       
       .dropdown-content a {
@@ -57,6 +58,14 @@
         background-color: #ccc;
         display: block;
         
+      }
+      #nav {
+        display: flex;
+        justify-content: flex-end;
+      }
+      #nav li.dropdownda {
+        margin-left: auto;
+        margin-right: 90px;
       }
       footer {
         {% comment %} position: absolute; {% endcomment %}
@@ -86,7 +95,6 @@
           <a class="dropdown-btn"> Camera </a>
           <div class="dropdown-content">
             {% for x in allcam %}
-           
               <a href=" {% url 'detail_camera' x.id_cam %}">Camera {{ x.id_cam }}</a>
             {% endfor %} 
           </div>  
@@ -94,7 +102,7 @@
         </li>
         <li><a href="/mapcam">Map Camera</a></li>
         {% if user_object %}
-        <li class="dropdown">
+        <li class="dropdown dropdownda">
           
           <a class="dropdown-btn">  {{ user_object }} </a>
           <div class="dropdown-content">
