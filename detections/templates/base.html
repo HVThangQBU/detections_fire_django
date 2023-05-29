@@ -99,7 +99,7 @@
           <a class="dropdown-btn">  {{ user_object }} </a>
           <div class="dropdown-content">
             <a href="/profile">Thông tin tài khoản</a>
-            {% if is_staff %}
+            {% if user_object.is_staff %}
               <a href="/admin/">Quản trị</a>
             {% endif %}
             <a href="/logout">Đăng xuất</a>

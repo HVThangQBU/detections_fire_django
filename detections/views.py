@@ -44,7 +44,7 @@ def index(request):
 @require_view_permission
 def detailCamera(request, id):
     template = loader.get_template("detail-camera.html")
-
+    user_object = User.objects.get(username=request.user.username)
     camera = Camera.objects.get(id_cam=id)
    
     detect_last = (
@@ -65,7 +65,7 @@ def detailCamera(request, id):
     'LIMIT 10;'
     )
 
-    user_object = User.objects.get(username=request.user.username)
+  
     context = {
         "index_cam": id,
         "camera": camera,
@@ -346,7 +346,7 @@ def editProfile(request):
         if request.FILES.get('image') != None:
             image = request.FILES.get('image')
 
-        first_name = request.POST.get('firstName', '')
+        first_name = request.POST.get('first_name', '')
         last_name = request.POST.get('last_name', '')
         number_phone = request.POST.get('number_phone', '')
         address = request.POST.get('address', '')
@@ -359,6 +359,7 @@ def editProfile(request):
         custom_user.latitude = latitude
         custom_user.longitude = longitude
         custom_user.bio = bio
+        
         custom_user.save()
         user_object.first_name = first_name
         user_object.last_name = last_name
