@@ -8,7 +8,9 @@
 
 
   <div class="camera-container">
-
+    <div id="popupView" class="popup" style="width: 600px; height: 700px">
+      <div id="imageContainer"></div>
+    </div>
     <div class="camera-main-list">
       <div class="camera-main-item" id="main-first">
         <div><img id="img-main" src="{% static 'addcam.png' %}" class="center" style="border: 1px solid #af4c4c00; width: 100%;" alt="Camera stream"></div>
@@ -63,6 +65,7 @@
  <script>
 
   window.addEventListener('load', function() {
+   
     const mainFirst = document.getElementById('main-first');
     const camHover1 = document.getElementById('cam-hover_1');
     const mainSecond = document.getElementById('main-second');
@@ -154,6 +157,89 @@
   }
 
 
+  var predic;
+
+  function getPrediction() {
+    $.ajax({
+      url: "{% url 'get_prediction' %}",
+      type: "GET",
+      success: function(response) {
+        console.log(response.cam_id_value);
+  
+        predic = response['prediction_list'][0][0];                                                                                   
+        if (predic !== 1) {
+          openPopupView(response.camid);
+        }
+        console.log(predic);
+        getPrediction();
+      },
+      error: function() {
+        console.log("Lỗi khi gọi API");
+  
+        // Gọi lại hàm getPrediction() để tiếp tục gọi
+        getPrediction();
+      },
+    });
+  }
+  
+  $(document).ready(function() {
+    // Gọi getPrediction() ngay lúc đầu
+    getPrediction();
+     // Thiết lập gọi lại getPrediction() sau mỗi 5 giây
+  setInterval(function() {
+    getPrediction();
+  }, 500); // 
+  });
+
+  var imageList = [];
+var imageMap = {};
+
+function openPopupView(camId) {
+  if (!imageMap[camId]) {
+    var imageContainer = document.getElementById("imageContainer");
+    var url = "/video_feed/camera/" + encodeURIComponent(camId) + "/";
+    
+    var img = document.createElement("img");
+
+    // Thêm tiền tố hoặc hậu tố vào ID
+    img.id = "image-" + camId;
+    img.src = url;
+    img.classList.add("image");
+
+    imageList.push(img);
+    imageMap[camId] = true; // Đánh dấu ID đã sử dụng
+
+    imageContainer.appendChild(img);
+  }
+
+  var popupView = document.getElementById("popupView");
+  popupView.style.display = "block";
+}
+
+function removeImage(camId) {
+  // Tìm index của phần tử cần xóa trong imageList
+  var index = -1;
+  for (var i = 0; i < imageList.length; i++) {
+    var imgLink = imageList[i];
+    if (imgLink.getAttribute("data-camid") === camId) {
+      index = i;
+      break;
+    }
+  }
+
+  // Kiểm tra nếu tìm thấy phần tử
+  if (index !== -1) {
+    // Xóa phần tử khỏi imageList
+    var removedElement = imageList.splice(index, 1)[0];
+
+    // Xóa phần tử khỏi DOM nếu nó có tồn tại
+    var imageContainer = document.getElementById("imageContainer");
+    if (imageContainer.contains(removedElement)) {
+      imageContainer.removeChild(removedElement);
+    }
+  }
+}
+  
 </script> 
 
 {% endblock %}

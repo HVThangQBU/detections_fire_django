@@ -23,4 +23,5 @@ urlpatterns = [
     path("cameras", views.get, name="cameras"),
     path("search_detection", views.search_detection, name="search_detection"),
     path("profile", views.editProfile, name="profile"),
+    path("get_prediction", views.getPrediction, name="get_prediction")
 ]

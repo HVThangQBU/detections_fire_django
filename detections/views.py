@@ -130,7 +130,8 @@ def loadDetect(request):
 
     return JsonResponse({"dct": dct}, status=200)
 
-
+cam_id_value= None
+prediction_value = None
 # @login_required(login_url='signin')
 def gen(camera_stream):
     """Video streaming generator function."""
@@ -138,11 +139,15 @@ def gen(camera_stream):
     end = 0
     num_frames = 0
     total_time = 0
+    global cam_id_value
+    global prediction_value
     send_detect = EmailTelegram.SendWarning()
     while True:
         time_start = time.time()
 
         cam_id, frame, prediction = camera_stream.get_frame(unique_name)
+        cam_id_value = cam_id
+        prediction_value = prediction
         if frame is None:
             break
 
@@ -365,3 +370,19 @@ def editProfile(request):
         user_object.last_name = last_name
         user_object.save()
     return HttpResponse(template.render(context, request))
+
+
+def getPrediction(request):
+    global prediction_value
+    global cam_id_value
+    prediction_list = prediction_value.tolist()
+    camera = Camera.objects.get(name_cam=cam_id_value)
+    if prediction_value != 1 :
+        dct = (
+                Detection.objects.filter(name_cam=camera.name_cam)
+                .order_by("-id_detect")
+                .values()[1]
+            )
+    
+ 
+    return JsonResponse({"camid" : camera.id_cam, "cam_id_value": cam_id_value, "prediction_list": prediction_list, "dct": dct})
