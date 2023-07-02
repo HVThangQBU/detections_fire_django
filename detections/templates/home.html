@@ -8,9 +8,13 @@
 
 
   <div class="camera-container">
-    <div id="popupView" class="popup" style="width: 600px; height: 700px">
-      <div id="imageContainer"></div>
+   
+  
+    <div id="popupView" >
+      <span class="close" onclick="closePopupV()" style="position: absolute; top: 10px; right: 10px;">&times;</span>
+      <div id="imageContainer" style="text-align: center;"></div>
     </div>
+    
     <div class="camera-main-list">
       <div class="camera-main-item" id="main-first">
         <div><img id="img-main" src="{% static 'addcam.png' %}" class="center" style="border: 1px solid #af4c4c00; width: 100%;" alt="Camera stream"></div>
@@ -169,9 +173,16 @@
         predic = response['prediction_list'][0][0];                                                                                   
         if (predic !== 1) {
           openPopupView(response.camid);
+          adjustPopupSize();
+        } else {
+          removeImage(response.camid)
         }
-        console.log(predic);
-        getPrediction();
+
+
+        if (response.dct !== null) {
+          console.log(response.dct["name_detect"]);
+        }
+      
       },
       error: function() {
         console.log("Lỗi khi gọi API");
@@ -188,57 +199,114 @@
      // Thiết lập gọi lại getPrediction() sau mỗi 5 giây
   setInterval(function() {
     getPrediction();
-  }, 500); // 
+  }, 1000); // 
   });
 
+
+  
+  function closePopupV() {
+    var popup = document.getElementById("popupView");
+    popup.style.display = "none";
+  }
+
   var imageList = [];
-var imageMap = {};
-
-function openPopupView(camId) {
-  if (!imageMap[camId]) {
+  var imageMap = {};
+  
+  function openPopupView(camId) {
     var imageContainer = document.getElementById("imageContainer");
-    var url = "/video_feed/camera/" + encodeURIComponent(camId) + "/";
+    var popupView = document.getElementById("popupView");
     
-    var img = document.createElement("img");
+    if (!imageMap[camId]) {
+      
+      var url = "/video_feed/camera/" + encodeURIComponent(camId) + "/";
+      var img = document.createElement("img");
+  
+      img.id = "image-" + camId;
+      img.src = url;
+      img.classList.add("image");
+      img.style.width = "300px"; // Set the desired width for the image
+      img.style.height = "200px"; // Set the desired height for the image
+  
+      var customLink = document.createElement("a");
+      customLink.href = "/detail_history/" + encodeURIComponent(camId);
+      customLink.setAttribute("data-camid", camId); // Set the data-camid attribute
+      customLink.appendChild(img);
+      //cus/// 3
 
-    // Thêm tiền tố hoặc hậu tố vào ID
-    img.id = "image-" + camId;
-    img.src = url;
-    img.classList.add("image");
-
-    imageList.push(img);
-    imageMap[camId] = true; // Đánh dấu ID đã sử dụng
-
-    imageContainer.appendChild(img);
-  }
-
-  var popupView = document.getElementById("popupView");
-  popupView.style.display = "block";
-}
-
-function removeImage(camId) {
-  // Tìm index của phần tử cần xóa trong imageList
-  var index = -1;
-  for (var i = 0; i < imageList.length; i++) {
-    var imgLink = imageList[i];
-    if (imgLink.getAttribute("data-camid") === camId) {
-      index = i;
-      break;
+  
+      if(!checkToAdd(customLink, imageList)){
+        imageList.push(customLink); // 3
+        imageContainer.appendChild(customLink);
+      }
+      
+      // remove //3 => ưemttopyo
+      imageMap[camId] = true;
+  
+      
+  
+      adjustPopupSize();
     }
+  
+    popupView.style.display = "block";
   }
 
-  // Kiểm tra nếu tìm thấy phần tử
-  if (index !== -1) {
-    // Xóa phần tử khỏi imageList
-    var removedElement = imageList.splice(index, 1)[0];
-
-    // Xóa phần tử khỏi DOM nếu nó có tồn tại
+  function checkToAdd(customLink, imageList){
+    var linkExists = imageList.some(function (link) {
+      return link.href === customLink.href;
+    });
+  }
+  
+  function removeImage(camId) {
+    
+    // Remove the element from the imageList
+  imageList = imageList.filter(function (imgLink) {
+      var a = imgLink.getAttribute("data-camid");
+      var b = camId
+      return imgLink.getAttribute("data-camid") != camId;
+    });
+    //imageList = newList;
+    
+  
+    // Remove the element from the DOM
     var imageContainer = document.getElementById("imageContainer");
-    if (imageContainer.contains(removedElement)) {
-      imageContainer.removeChild(removedElement);
+    var imgLinkToRemove = document.querySelector('a[data-camid="' + camId + '"]');
+    if (imgLinkToRemove) {
+      imageContainer.removeChild(imgLinkToRemove);
     }
+  
+    // Update the imageMap
+    imageMap[camId] = false;
+  
+    adjustPopupSize();
   }
+  
+ 
+
+
+function adjustPopupSize() {
+  var popupView = document.getElementById("popupView");
+  var imageContainer = document.getElementById("imageContainer");
+
+  var imgCount = imageList.length;
+  console.log("SIZEW", imgCount)
+  var popupHeight = imgCount * imageContainer.offsetHeight;
+
+  popupView.style.position = "fixed";
+  popupView.style.top = "50%";
+  popupView.style.left = "50%";
+  popupView.style.transform = "translate(-50%, -50%)";
+  popupView.style.zIndex = "9999";
+  popupView.style.width = "auto";
+  popupView.style.overflow = "auto";
+  
+
+  popupView.style.height = popupHeight + "px";
+
+  var popupWidth = imageContainer.offsetWidth;
+  popupView.style.width = popupWidth + "px";
 }
+
+
   
 </script> 
 
@@ -325,12 +393,10 @@ function removeImage(camId) {
   }
   .camera-container {
     display: flex;
-    margin: 5px;
     justify-content: center;
     align-items: center;
-    max-width:95%;
-    margin: auto;
-  
+    max-width: 95%;
+    margin: 5px auto;
   }
   
   /*.camera-main {

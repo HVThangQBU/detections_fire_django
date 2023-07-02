@@ -121,10 +121,11 @@ $(document).ready(function() {
   var currentData = null;
   $.ajax({
       type: 'GET',
-      url: "{% url 'load_detect' %}",
+      url: "{% url 'get_prediction' %}",
       data: {"id": id},
 
-      success: function ({dct}) {
+      success: function ({response}) {
+        dct = response.dct
 
       if (JSON.stringify(dct) !== JSON.stringify(currentData)) {
         currentData = dct; 

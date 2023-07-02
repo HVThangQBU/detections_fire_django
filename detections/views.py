@@ -169,6 +169,8 @@ def gen(camera_stream):
             (0, 255, 255),
             2,
         )
+
+        frame_copy = frame
         
         if prediction == 1:
             print("cul", prediction)
@@ -181,12 +183,12 @@ def gen(camera_stream):
             date_string = str(nowT.strftime("%H:%M, %d/%m/%Y"))
             now = datetime.datetime.now().second
           
-            if (now != end) & (int(now) % 59 == 0):
+            if (now != end) & (int(now) % 5 == 0):
                 end = datetime.datetime.now().second
                 # send_detect.sendEmail("hoangthangdnd870@gmail.com", date_string, "Nam Lý - Trần Hưng Đạo giao Hữu Nghị",frame)
         
-                # string = 'Tình trạng: Hiện tại đang có cháy \nĐịa điểm: Nam Lý - Trần Hưng Đạo giao Hữu Nghị  \nThời gian: ' + date_string + '\nXem hình ảnh để đánh giá và xử lý kịp thời.'
-                # asyncio.run(send_detect.send_message_async(string, frame))
+                string = 'Tình trạng: Hiện tại đang có cháy \nĐịa điểm: Nam Lý - Trần Hưng Đạo giao Hữu Nghị  \nThời gian: ' + date_string + '\nXem hình ảnh để đánh giá và xử lý kịp thời.'
+                asyncio.run(send_detect.send_message_async(string, frame_copy))
               
                 # string = 'Tình trạng: Hiện tại đang có cháy \nĐịa điểm: Nam Lý - Trần Hưng Đạo giao Hữu Nghị  \nThời gian: ' + date_string + '\nVui lòng truy cập vào website để xem  hình ảnh để đánh giá và xử lý kịp thời.'
                 # send_detect.sendSMS(string)
@@ -377,7 +379,10 @@ def getPrediction(request):
     global cam_id_value
     prediction_list = prediction_value.tolist()
     camera = Camera.objects.get(name_cam=cam_id_value)
+    dct = None
+
     if prediction_value != 1 :
+       
         dct = (
                 Detection.objects.filter(name_cam=camera.name_cam)
                 .order_by("-id_detect")
@@ -385,4 +390,4 @@ def getPrediction(request):
             )
     
  
-    return JsonResponse({"camid" : camera.id_cam, "cam_id_value": cam_id_value, "prediction_list": prediction_list, "dct": dct})
+    return JsonResponse({"camid" :camera.id_cam , "cam_id_value": cam_id_value, "prediction_list": prediction_list, "dct": dct})
