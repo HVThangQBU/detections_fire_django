@@ -24,13 +24,12 @@ from django.forms.models import model_to_dict
 from django.http import HttpResponseNotFound, JsonResponse
 from detections import EmailTelegram
 import asyncio
+from django.core.exceptions import ObjectDoesNotExist
 
 @login_required(login_url="signin")
 def index(request):
     user_object = User.objects.get(username=request.user.username)
-    print("ten")
     allcam = Camera.objects.all().values()
-    print("ten",allcam)
     template = loader.get_template("home.html")
     context = {
         "allcam": allcam,
@@ -82,7 +81,6 @@ def detailCamera(request, id):
 def detailHistory(request, id):
     id = id -1
     template = loader.get_template("detail-history.html")
-    print("id chi so: ", id)
     queryset = Camera.objects.all()
     id_cam = queryset[id].id_cam
     camera = Camera.objects.get(id_cam=id_cam)
@@ -151,8 +149,6 @@ def gen(camera_stream):
         if frame is None:
             break
 
-
-       
         num_frames += 1
     
         time_now = time.time()
@@ -186,9 +182,11 @@ def gen(camera_stream):
             if (now != end) & (int(now) % 5 == 0):
                 end = datetime.datetime.now().second
                 # send_detect.sendEmail("hoangthangdnd870@gmail.com", date_string, "Nam Lý - Trần Hưng Đạo giao Hữu Nghị",frame)
-        
+               
+
                 string = 'Tình trạng: Hiện tại đang có cháy \nĐịa điểm: Nam Lý - Trần Hưng Đạo giao Hữu Nghị  \nThời gian: ' + date_string + '\nXem hình ảnh để đánh giá và xử lý kịp thời.'
                 asyncio.run(send_detect.send_message_async(string, frame_copy))
+                
               
                 # string = 'Tình trạng: Hiện tại đang có cháy \nĐịa điểm: Nam Lý - Trần Hưng Đạo giao Hữu Nghị  \nThời gian: ' + date_string + '\nVui lòng truy cập vào website để xem  hình ảnh để đánh giá và xử lý kịp thời.'
                 # send_detect.sendSMS(string)
@@ -375,19 +373,25 @@ def editProfile(request):
 
 
 def getPrediction(request):
-    global prediction_value
-    global cam_id_value
-    prediction_list = prediction_value.tolist()
-    camera = Camera.objects.get(name_cam=cam_id_value)
-    dct = None
+    try:
+        camera = Camera.objects.get(name_cam=cam_id_value)
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": "Camera not found"})
 
-    if prediction_value != 1 :
-       
-        dct = (
-                Detection.objects.filter(name_cam=camera.name_cam)
-                .order_by("-id_detect")
-                .values()[1]
-            )
-    
- 
-    return JsonResponse({"camid" :camera.id_cam , "cam_id_value": cam_id_value, "prediction_list": prediction_list, "dct": dct})
+    prediction_list = prediction_value.tolist() if prediction_value is not None else []
+
+    try:
+        latest_detection = (
+            Detection.objects.filter(name_cam=camera.name_cam)
+            .order_by("-id_detect")
+            .values()[1]
+        )
+    except IndexError:
+        latest_detection = None
+
+    return JsonResponse({
+        "camid": camera.id_cam,
+        "cam_id_value": cam_id_value,
+        "prediction_list": prediction_list,
+        "dct": latest_detection,
+    })
