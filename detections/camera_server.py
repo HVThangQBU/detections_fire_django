@@ -78,7 +78,7 @@ class Camera(BaseCamera):
                 if os.path.exists(folder_path) and os.path.isdir(folder_path):
                     print("Thư mục đã tồn tại.")
                 else:
-                  os.mkdir("media/detect_image/" + cam_id)
+                  os.mkdir(folder_path)
                 # try:
 
                     # date_string = localtime.strftime("%Y-%m-%d")

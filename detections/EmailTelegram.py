@@ -104,7 +104,7 @@ class SendWarning:
   async def send_message_async(self, text, photo):
       bot = telegram.Bot(token='6172070800:AAH2ErADahQRbboQbJcoD2FUNph7MeOBNbA')
       chat_id = '5150505079'
-      message = await bot.send_message(chat_id=chat_id, text=text)
+    
       # Convert the image to a numpy array
       image_np = np.array(photo)
 
@@ -124,7 +124,7 @@ class SendWarning:
           # get the byte data from the buffer
           buffer.seek(0)
           photo_bytes = buffer.read()
-
+      message = await bot.send_message(chat_id=chat_id, text=text)
       img = await bot.send_photo(chat_id=chat_id, photo=photo_bytes, caption="Hình ảnh đám cháy")
       return message, img
 
