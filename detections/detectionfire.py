@@ -23,10 +23,10 @@ class CameraDetectionFire(object):
         device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
     if args["cpu"] and args["trt"]:
-        print(f'\n>>>>TensorRT runs only on gpu. Exit.')
+        
         exit()
 
-    print('\n\nBegin {fire, no-fire} classification :')
+  
     self.np_transforms = self.data_transform(self.config["models"]["md1"])
     
     # model load
@@ -41,10 +41,10 @@ class CameraDetectionFire(object):
             w_path = 'detections/weights/shufflenet_ff.pt'
         self.model.load_state_dict(torch.load(w_path, map_location=device))
     else:
-        print('Invalid Model.')
+       
         exit()
 
-    print(f'|__Model loading: {self.config["models"]["md1"]}')
+ 
 
     self.model.eval()
     self.model.to(device)
@@ -81,7 +81,7 @@ class CameraDetectionFire(object):
   def run_model_img(self, frame):
     output = self.model(frame)
     pred = torch.round(torch.sigmoid(output))
-    print(torch.sigmoid(output))
+
     return pred
   
   def detection_fire(self, frame):

@@ -1,3 +1,4 @@
+import threading
 from django.shortcuts import render
 
 # Create your views here.
@@ -130,6 +131,12 @@ def loadDetect(request):
 
 cam_id_value= None
 prediction_value = None
+
+def send_messages(send_detect, string, frame_copy):
+    asyncio.set_event_loop(asyncio.new_event_loop())
+    loop = asyncio.get_event_loop()
+    task = loop.create_task(send_detect.send_message_async(string, frame_copy))
+    loop.run_until_complete(task)
 # @login_required(login_url='signin')
 def gen(camera_stream):
     """Video streaming generator function."""
@@ -168,10 +175,7 @@ def gen(camera_stream):
 
         frame_copy = frame
         
-        if prediction == 1:
-            print("cul", prediction)
-            print(f'\t\t|____No-Fire')
-        else:
+        if not prediction == 1:
             # localtime = datetime.datetime.now()
             # date_string = str(localtime.strftime("%Y-%m-%d"))
             
@@ -185,17 +189,14 @@ def gen(camera_stream):
                
 
                 string = 'Tình trạng: Hiện tại đang có cháy \nĐịa điểm: Nam Lý - Trần Hưng Đạo giao Hữu Nghị  \nThời gian: ' + date_string + '\nXem hình ảnh để đánh giá và xử lý kịp thời.'
-                asyncio.run(send_detect.send_message_async(string, frame_copy))
-                
+
+                # Khởi tạo một thread riêng biệt cho việc gửi tin nhắn
+                send_thread = threading.Thread(target=send_messages, args=(send_detect, string, frame_copy))
+                send_thread.start()
               
                 # string = 'Tình trạng: Hiện tại đang có cháy \nĐịa điểm: Nam Lý - Trần Hưng Đạo giao Hữu Nghị  \nThời gian: ' + date_string + '\nVui lòng truy cập vào website để xem  hình ảnh để đánh giá và xử lý kịp thời.'
                 # send_detect.sendSMS(string)
        
-
-        # if feed_type == 'yolo':
-        #     cv2.putText(frame, "FPS: %.2f" % fps, (int(0.75 * frame.shape[1]), int(0.9 * frame.shape[0])), 0,
-        #                 1.5e-3 * frame.shape[0], (0, 255, 255), 2)
-
         frame = cv2.imencode(".jpg", frame)[
             1
         ].tobytes()  # Remove this line for test camera

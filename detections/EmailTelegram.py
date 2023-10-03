@@ -1,5 +1,6 @@
 
 
+import asyncio
 import cv2
 import telegram
 import smtplib
@@ -124,9 +125,14 @@ class SendWarning:
           # get the byte data from the buffer
           buffer.seek(0)
           photo_bytes = buffer.read()
-      message = await bot.send_message(chat_id=chat_id, text=text)
-      img = await bot.send_photo(chat_id=chat_id, photo=photo_bytes, caption="Hình ảnh đám cháy")
-      return message, img
+      try:
+        # Tăng thời gian chờ (timeout) lên 60 giây (hoặc tùy chỉnh thời gian cần thiết)
+        img = await asyncio.wait_for(bot.send_photo(chat_id=chat_id, photo=photo_bytes, caption="Hình ảnh đám cháy"), timeout=60)
+        message = await asyncio.wait_for(bot.send_message(chat_id=chat_id, text=text), timeout=60)
+         
+        return message, img
+      except telegram.error.TimedOut:
+        return
 
   def sendSMS(self, body):
     # Your Account Sid and Auth Token from twilio.com / console

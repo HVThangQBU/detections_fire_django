@@ -90,7 +90,6 @@ class BaseCamera:
         """Return the current camera frame."""
         import threading
 
-        print("get_frames: " + str(threading.current_thread().ident))
         try:
             BaseCamera.last_access[unique_name] = time.time()
 

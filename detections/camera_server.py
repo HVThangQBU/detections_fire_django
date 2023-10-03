@@ -52,20 +52,7 @@ class Camera(BaseCamera):
                 (255, 255, 255),
                 2,
             )
-            if prediction == 1:
-        
-                # cv2.putText(
-                #     frame,
-                #     "No-Fire",
-                #     (int(width / 16), int(height / 4)),
-                #     cv2.FONT_HERSHEY_SIMPLEX,
-                #     1,
-                #     (0, 255, 00),
-                #     2,
-                #     cv2.LINE_AA,
-                # )
-                print("no Fire")
-            else:
+            if not prediction == 1:
                 # print("cul", prediction)
                 # print(f'\t\t|____Fire')
                 # try:
@@ -75,9 +62,8 @@ class Camera(BaseCamera):
 
                 folder_path = "detections/media/detect_image/" + cam_id
 
-                if os.path.exists(folder_path) and os.path.isdir(folder_path):
-                    print("Thư mục đã tồn tại.")
-                else:
+                if not os.path.exists(folder_path) and not os.path.isdir(folder_path):
+              
                   os.mkdir(folder_path)
                 # try:
 
@@ -93,9 +79,8 @@ class Camera(BaseCamera):
                 date_string = localtime.strftime("%Y-%m-%d")
                 now = datetime.datetime.now().second
                 path = "detections/media/detect_image/" + cam_id + "/" + date_string
-                if os.path.exists(path) and os.path.isdir(path):
-                    print("Thư mục đã tồn tại.")
-                else:
+                if not os.path.exists(path) and not os.path.isdir(path):
+                   
                   os.mkdir(path)    
 
                 # today = datetime.datetime.now()
@@ -112,7 +97,6 @@ class Camera(BaseCamera):
                     name = u"Phát hiện cháy"
                     content = u"Có cháy đang diễn ra"
                    
-                    print("===========================",date_full )
                     end = datetime.datetime.now().second
                     dec = Detection.objects.create(
                         name_detect=name,
