@@ -116,7 +116,6 @@ $(document).ready(function() {
  
  var loadData = function() {
   var id = document.getElementById("idcamera").value;
-  console.log(12312,id);
   // GET AJAX request
   var currentData = null;
   $.ajax({
@@ -124,30 +123,27 @@ $(document).ready(function() {
       url: "{% url 'get_prediction' %}",
       data: {"id": id},
 
-      success: function ({response}) {
-        dct = response.dct
+      success: function (response) {
+    
+        if (response && response.dct) {
+          var dct = response.dct
+      
+          if (JSON.stringify(dct) !== JSON.stringify(currentData)) {
+            currentData = dct; 
+            todayDate = dateFormat(dct.time_detect, "dd/mm/yyyy h:MM:ss TT");
 
-      if (JSON.stringify(dct) !== JSON.stringify(currentData)) {
-        currentData = dct; 
-        todayDate = dateFormat(dct.time_detect, "dd/mm/yyyy h:MM:ss TT");
-
-        console.log(123, todayDate)
-        
-
-           var html =   " <div class='log-canhbao'><div class='log-img'>"
-              + "<img src='" + {{ MEDIA_URL }} + dct.image_detect + "' alt='' class='center' style='width:150px; height: 100px;'></div><div class='log-content'><p class='log-content-name'> Tên cảnh báo:  <span>" +
-                dct.name_detect + "</span></p><p class='log-content-time'> Thời gian: <span>" +
-                  todayDate + "</span></p></div> </div>"; 
-          $("#display-log").prepend(html);
+              var html =   " <div class='log-canhbao'><div class='log-img'>"
+                  + "<img src='" + {{ MEDIA_URL }} + dct.image_detect + "' alt='' class='center' style='width:150px; height: 100px;'></div><div class='log-content'><p class='log-content-name'> Tên cảnh báo:  <span>" +
+                    dct.name_detect + "</span></p><p class='log-content-time'> Thời gian: <span>" +
+                      todayDate + "</span></p></div> </div>"; 
+              $("#display-log").prepend(html);
           }
+        }
 
-         setTimeout(loadData, 1000);
-
-
+        setTimeout(loadData, 3000);
       },
       error: function (error) {
-          console.log(123,error)
-      }
+        }
   });
 };
 

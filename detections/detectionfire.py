@@ -80,8 +80,10 @@ class CameraDetectionFire(object):
   # model prediction on image
   def run_model_img(self, frame):
     output = self.model(frame)
-    pred = torch.round(torch.sigmoid(output))
-
+    custom_threshold = 0.15
+    predFloat = torch.zeros_like(output)  
+    predFloat[torch.sigmoid(output) > custom_threshold] = 1.0  
+    pred = torch.round(predFloat)
     return pred
   
   def detection_fire(self, frame):

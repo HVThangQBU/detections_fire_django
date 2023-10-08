@@ -16,6 +16,109 @@
     </div>
     
     <div class="camera-main-list">
+
+     
+      {% if allcam|length >= 4 %}
+      {% with first_cam=allcam.0 %}
+        <div class="camera-main-item" id="main-first">
+          {% if first_cam %}
+            <div>
+                <img id="img-main" src="{% url 'video_feed' feed_type='camera' device=first_cam.id_cam %}" class="center" style="border: 1px solid #af4c4c00; width: 100%;" alt="Camera stream">
+            </div>
+            <div class="camera-hover-item" id="cam-hover_1">
+              <input type="hidden" id="inID1">
+              <a href="{% url 'detail_camera' first_cam.id_cam %}" id="main-cam_detail">Xem chi tiết</a>
+            </div>
+          {% else %}
+            <div>
+              <img id="img-main" src="{% static 'addcam.png' %}" class="center" style="border: 1px solid #af4c4c00; width: 100%;" alt="Camera stream">
+            </div>
+            <div class="camera-hover-item" id="cam-hover_1">
+              <input type="hidden" id="inID1">
+              <a href="#" id="main-cam_detail">Xem chi tiết</a>
+            </div> 
+        {% endif %}
+        </div>
+      {% endwith %}
+
+      {% with two_cam=allcam.1 %}
+      <div class="camera-main-item" id="main-second">
+        {% if two_cam %}
+          <div>
+        
+            <img id="img-main-second" src="{% url 'video_feed' feed_type='camera' device=two_cam.id_cam %}" class="center" style="border: 1px solid #af4c4c00; width: 100%;" alt="Camera stream">
+        
+          </div>
+          <div class="camera-hover-item" id="cam-hover_2">
+            <a href="{% url 'detail_camera' two_cam.id_cam %}" id="main-cam_detail">Xem chi tiết</a>
+          </div>
+        {% else %}
+          <div>
+        
+            <img id="img-main-second" src="{% static 'addcam.png' %}" class="center" style="border: 1px solid #af4c4c00; width: 100%;" alt="Camera stream">
+        
+          </div>
+          <div class="camera-hover-item" id="cam-hover_2">
+            <a href="#" id="main-cam_detail">Xem chi tiết</a>
+          </div>
+       
+        {% endif %}
+      </div>
+      {% endwith %}
+      {% with three_cam=allcam.2 %}
+      <div class="camera-main-item" id="main-third">
+        {% if three_cam %}
+          <div>
+          
+            <img id="img-main-third" src="{% url 'video_feed' feed_type='camera' device=three_cam.id_cam %}" class="center" style="border: 1px solid #af4c4c00; width: 100%;" alt="Camera stream">
+           
+          </div>
+          <div class="camera-hover-item"  id="cam-hover_3">
+            <input type="hidden" id="inID2" >
+            <a href="{% url 'detail_camera' three_cam.id_cam %}" id="main-cam_detail">Xem chi tiết</a>
+          </div>
+        {% else %}
+        <div>
+          
+          <img id="img-main-third" src="{% static 'addcam.png' %}" class="center" style="border: 1px solid #af4c4c00; width: 100%;" alt="Camera stream">
+         
+        </div>
+        <div class="camera-hover-item"  id="cam-hover_3">
+          <input type="hidden" id="inID2" >
+          <a href="#" id="main-cam_detail">Xem chi tiết</a>
+        </div>
+       
+        {% endif %}
+      </div>
+      {% endwith %}
+
+      {% with four_cam=allcam.3 %}
+      <div class="camera-main-item" id="main-four">
+        {% if four_cam %}
+        <div>
+       
+          <img id="img-main-four" src="{% url 'video_feed' feed_type='camera' device=four_cam.id_cam %}" class="center" style="border: 1px solid #af4c4c00; width: 100%" alt="Camera stream">
+         
+        </div>
+        <div class="camera-hover-item"  id="cam-hover_4">
+          <input type="hidden" id="inID4" >
+          <a href="{% url 'detail_camera' four_cam.id_cam %}" id="main-cam_detail">Xem chi tiết</a>
+        </div>
+        {% else %}
+        <div>
+       
+          <img id="img-main-four" src="{% static 'addcam.png' %}" class="center" style="border: 1px solid #af4c4c00; width: 100%" alt="Camera stream">
+        </div>
+        <div class="camera-hover-item"  id="cam-hover_4">
+          <input type="hidden" id="inID4" >
+          <a href="#" id="main-cam_detail">Xem chi tiết</a>
+        </div>
+      
+       {% endif %}
+       
+      </div>
+      {% endwith %}
+      {% else %}
       <div class="camera-main-item" id="main-first">
         <div><img id="img-main" src="{% static 'addcam.png' %}" class="center" style="border: 1px solid #af4c4c00; width: 100%;" alt="Camera stream"></div>
         <div class="camera-hover-item"  id="cam-hover_1">
@@ -47,6 +150,8 @@
         </div>
        
       </div>
+      {% endif %}
+  
      
     </div>  
 

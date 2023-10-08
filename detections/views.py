@@ -173,18 +173,17 @@ def gen(camera_stream):
             2,
         )
 
-        frame_copy = frame
-        
         if not prediction == 1:
             # localtime = datetime.datetime.now()
             # date_string = str(localtime.strftime("%Y-%m-%d"))
-            
+            frame_copy = frame
             nowT = datetime.datetime.now()
             date_string = str(nowT.strftime("%H:%M, %d/%m/%Y"))
             now = datetime.datetime.now().second
           
-            if (now != end) & (int(now) % 5 == 0):
-                end = datetime.datetime.now().second
+            if (now != end) & (int(now) % 20 == 0):
+                print("giây", now)
+               
                 # send_detect.sendEmail("hoangthangdnd870@gmail.com", date_string, "Nam Lý - Trần Hưng Đạo giao Hữu Nghị",frame)
                
 
@@ -193,10 +192,10 @@ def gen(camera_stream):
                 # Khởi tạo một thread riêng biệt cho việc gửi tin nhắn
                 send_thread = threading.Thread(target=send_messages, args=(send_detect, string, frame_copy))
                 send_thread.start()
-              
+                end = datetime.datetime.now().second
                 # string = 'Tình trạng: Hiện tại đang có cháy \nĐịa điểm: Nam Lý - Trần Hưng Đạo giao Hữu Nghị  \nThời gian: ' + date_string + '\nVui lòng truy cập vào website để xem  hình ảnh để đánh giá và xử lý kịp thời.'
                 # send_detect.sendSMS(string)
-       
+
         frame = cv2.imencode(".jpg", frame)[
             1
         ].tobytes()  # Remove this line for test camera
